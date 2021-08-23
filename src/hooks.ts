@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, CSSProperties } from "react";
 
 export const useAnimatedScale = () => {
     const [scale, setScale] = useState(0)
@@ -34,12 +34,66 @@ export const useDimension = () => {
         }
         return () => {
             window.onresize = () => {
-                
+
             }
         }
     })
     return {
         w, 
         h
+    }
+}
+
+const maxScale = (scale : number, i : number, n : number) : number => Math.max(0, scale - i / n)
+
+const divideScale = (scale : number, i : number, n : number) : number => Math.min(1 / n, maxScale(scale, i, n)) * n 
+
+export const useStyle = (w : number, h : number, scale : number) => {
+    const size : number = Math.min(w, h) / 10 
+    const position = 'absolute'
+    const sc1 = divideScale(scale, 0, 3) 
+    const sc2 = divideScale(scale, 1, 3)
+    const sc3 = divideScale(scale, 2, 3)
+    const background = '#311B92'
+    return {
+        parentStyle() : CSSProperties {
+            const left = `${w / 2}px`
+            const top = `${h / 2 + (h / 2 - 2 * size) * sc2}px`
+            const transform = `${180 * sc3}`
+            return {
+                left, 
+                top, 
+                position,
+                transform, 
+            }
+        },
+        squareStyle() : CSSProperties {
+            const width = `${size}px`
+            const height = `${size}px`
+            const left = `${-size / 2}px`
+            const top = `${-size / 2}px`
+            return {
+                position,
+                width, 
+                height,
+                left, 
+                top,
+                background
+            }           
+        },
+        lineStyle(i : number) : CSSProperties {
+            const width = `${Math.min(w, h) / 90}px`
+            const height = `${size * sc1}px`
+            const left = `${-size / 2 + size * i}px`
+            const top = `${-size * sc1}px`
+            return {
+                position, 
+                width, 
+                height, 
+                left, 
+                top, 
+                background 
+            }
+        }
     }
 }
