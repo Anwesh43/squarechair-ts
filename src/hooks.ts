@@ -14,6 +14,7 @@ export const useAnimatedScale = () => {
                     setScale((prev : number) => {
                         if (prev > 1) {
                             setAnimated(false)
+                            clearInterval(interval)
                             return 0
                         }
                         return prev + scGap  
@@ -51,15 +52,16 @@ const divideScale = (scale : number, i : number, n : number) : number => Math.mi
 export const useStyle = (w : number, h : number, scale : number) => {
     const size : number = Math.min(w, h) / 10 
     const position = 'absolute'
-    const sc1 = divideScale(scale, 0, 3) 
-    const sc2 = divideScale(scale, 1, 3)
-    const sc3 = divideScale(scale, 2, 3)
+    const sf : number = Math.sin(scale * Math.PI)
+    const sc1 = divideScale(sf, 0, 3) 
+    const sc2 = divideScale(sf, 1, 3)
+    const sc3 = divideScale(sf, 2, 3)
     const background = '#311B92'
     return {
         parentStyle() : CSSProperties {
             const left = `${w / 2}px`
-            const top = `${h / 2 + (h / 2 - 2 * size) * sc2}px`
-            const transform = `${180 * sc3}`
+            const top = `${h / 2 + (h / 2 - size) * sc3}px`
+            const transform = `rotate(${180 * sc2}deg)`
             return {
                 left, 
                 top, 
@@ -84,7 +86,7 @@ export const useStyle = (w : number, h : number, scale : number) => {
         lineStyle(i : number) : CSSProperties {
             const width = `${Math.min(w, h) / 90}px`
             const height = `${size * sc1}px`
-            const left = `${-size / 2 + size * i}px`
+            const left = `${-size / 2 + (size - Math.min(w, h) / 90) * i}px`
             const top = `${-size * sc1}px`
             return {
                 position, 

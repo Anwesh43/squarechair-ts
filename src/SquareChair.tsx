@@ -12,7 +12,7 @@ interface SquareChairProps {
 const SquareChair = (props : SquareChairProps) => {
     const {lineStyle, squareStyle, parentStyle} = useStyle(props.w, props.h, props.scale)
     return (
-        <div style = {parentStyle()}>
+        <div onClick = {() => props.onClick()} style = {parentStyle()}>
             <div style = {squareStyle()}></div>
             {[0, 1].map(i => (<div key = {`sqyare_${i}`} style = {lineStyle(i)}></div>))}
         </div>
